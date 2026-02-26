@@ -1,0 +1,26 @@
+name: Build Core Rulebook
+
+on:
+  push:
+    paths:
+      - 'core/*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Concatenate Markdown files
+        run: |
+          mkdir -p build
+          cat core/*.md > build/core-full.md
+
+      - name: Commit built file
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add build/core-full.md
+          git commit -m "Auto build core-full.md" || echo "No changes"
+          git push
