@@ -1,30 +1,17 @@
-# urban-assault
-##フォーマット
-###コアルール
-####命名ルール
-- GitHub
-- LOCAL
+# URBAN ASSAULT × RHL
 
----
+現代市街戦ローグライクTRPG。
 
-###拡張
-####命名ルール
-- GitHub
-- LOCAL
+## 無償公開内容
 
----
+- コアルール v1.00
+- ミニシナリオ2本
 
-###サプリメント
-####命名ルール
-- GitHub
-- LOCAL
+## プレイ時間
+約15〜30分
 
----
+## ライセンス
 
-###シナリオ
-####命名ルール
-- GITHUB用
-  [ダイス帯]_[想定Lv帯]_[場所]_[カテゴリ]_[連番].md
-  exp) d33_lvl10-11_port_training_01.md
-- ローカル用
-  trpg_<systemname>_scenario_<scenarioid>.md
+RLH利用規則に準拠
+
+> https://ftbooks.xyz/ftnews/gamebook/RogueLikeHalf_TOS.pdf
