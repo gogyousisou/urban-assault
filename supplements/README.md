@@ -1,3 +1,0 @@
-# supplements
-
-サプリメント管理
