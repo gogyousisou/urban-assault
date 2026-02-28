@@ -1,4 +1,4 @@
-# URBAN ASSAULT × RHL
+# URBAN ASSAULT × ローグライクハーフ
 
 現代市街戦ローグライクTRPG。
 
