@@ -2,7 +2,7 @@
 ## <区域接触任務>
 ---
 system: URBAN ASSAULT × RHL
-core_version: 1.00
+core_version: 0.10
 scenario_id: d33-training-01
 recommended_level: 10-11
 mode: 一本道
