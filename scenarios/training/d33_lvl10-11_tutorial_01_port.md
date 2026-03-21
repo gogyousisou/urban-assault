@@ -50,7 +50,7 @@ mode: 一本道
 > https://ftbooks.booth.pm/items/4671946  
 
 <p align="center">
-  <img src="../images/RLH_icon.png" width="180">
+  <img src="../../images/RLH_icon.png" width="180">
 </p>
 
 
