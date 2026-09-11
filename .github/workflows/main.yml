@@ -3,19 +3,23 @@ name: Build Core Rulebook
 on:
   push:
     paths:
-      - 'core/*.md'
+      - 'core/core-rule-full.md'
+      - '.github/workflows/main.yml'
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Concatenate Markdown files
+      - name: Build core rulebook source
         run: |
           mkdir -p build
-          cat core/*.md > build/core-full.md
+          cp core/core-rule-full.md build/core-full.md
 
       - name: Commit built file
         run: |
