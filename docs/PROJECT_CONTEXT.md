@@ -1,4 +1,4 @@
-このPROJECT_CONTEXTを前提に相談します
+このPROJECT_CONTEXTを前提に相談します  
 URBAN ASSAULTプロジェクトの続きです
 
 # URBAN ASSAULT × ローグライクハーフ
@@ -8,100 +8,97 @@ Project Context
 
 ## Project Overview
 
-URBAN ASSAULT × ローグライクハーフは  
-「ローグライクハーフ（RHL）」の基本ルールをベースに  
-現代市街戦をテーマとして再構成したバリアントTRPGです。
+URBAN ASSAULT × ローグライクハーフは、FT書房『ローグライクハーフ（RHL）』の基本ルールを基盤に、現代市街戦をテーマとして再構成した非公式バリアントです。
 
 ジャンル：  
 ソロTRPG / ローグライク / 戦術ゲーム
 
-プレイ時間：  
-約15〜30分
+プレイ情報：
+- プレイヤー人数：1～2人
+- プレイ時間：15～30分（シナリオにより変動）
+- 対象年齢：12歳以上
+- GM：不要
+- ジャンル：ミリタリー／現代戦／戦術
+- レベル：初級
+- 難易度：Normal
+- 形式：サプリメント（バリアントルール）
+- 世界：オリジナル（現実世界をベースにしたパラレルワールド）
 
 特徴：
-
-・分隊戦術ゲーム  
-・弾倉を中心とした資源管理  
-・1シナリオ完結型  
-・ランダムイベント構造  
-・ソロプレイ前提  
+- 分隊戦術ゲーム
+- 弾倉を中心とした資源管理
+- 1シナリオ完結型
+- ランダムイベント構造
+- ソロプレイ前提、2人プレイ対応
 
 ---
 
 ## Repository
 
-GitHub
-
+GitHub  
 https://github.com/gogyousisou/urban-assault
+
+公開リポジトリです。第三者著作物本文、公開許諾のない資料、秘密情報、APIキー等は格納しません。
 
 ---
 
 ## Branch Structure
 
-main  
+### `main`
 開発正本ブランチ。  
-ルール改訂、シナリオ開発、研究メモ、テストプレイ資料などの開発成果を管理する。  
-ただし本リポジトリは公開リポジトリであるため、main に格納する内容は常に一般公開可能なものに限る。  
-第三者の著作物本文、公開許諾のない資料、秘密情報、APIキー等を格納しない。  
-開発途中の内容であっても、公開されることを前提として管理する。
+ルール改訂、シナリオ開発、研究メモ、テストプレイ資料などの開発成果を管理します。  
+公開リポジトリであるため、開発途中であっても常に一般公開可能な内容だけを格納します。
 
-public-release  
+### `public-release`
 公開安定版ブランチ。  
-一般利用者向けに公開する、確認済み・完成済みのデータのみを格納する。  
-main で開発・確認を行い、公開可能と判断した版だけを public-release に反映する。
+一般利用者向けに確認済み・完成済みデータだけを格納します。  
+`public-release` 側では直接開発を行いません。
 
-公開フロー  
-main → 内容確認 → public-release
+### 公開フロー
+`main → 内容確認 → public-release`
 
-運用原則  
-- main を開発上の正本とする。  
-- public-release は配布・参照用の安定版とする。  
-- public-release 側で直接開発を行わない。  
-- main と public-release のどちらにも、再配布を許可されていない第三者著作物本文を格納しない。  
-- ローグライクハーフ公式作品は設計研究の参考とし、URBAN ASSAULT側では独自文章・独自データを原則とする。
+### 現在の改訂作業ブランチ
+`refactor/v1.01-core-cleanup`
 
----
-
-## Current Release
-
-公開安定版：Core Rule v1.00  
-公開内容：
-
-・コアルール  
-・ミニシナリオ2本  
+v1.01 の公開安全化、コアルール整合修正、リポジトリ整理を行う一時作業ブランチです。  
+確認完了までは `main` / `public-release` へ直接反映しません。
 
 ---
 
-## Current Development
+## Version Status
 
-開発版：Core Rule v1.01  
-作業ブランチ：`refactor/v1.01-core-cleanup`
+- `refactor/v1.01-core-cleanup`：Core Rule v1.01 改訂候補
+- `main`：Core Rule v1.00
+- `public-release`：Core Rule v0.20（現行安定公開ブランチ）
 
-v1.01 P0整合修正は完了。  
-主な反映内容：
+v1.01 はまだ `main` / `public-release` へ反映していません。
 
-・原作抜粋表記／原作文の独自文章化  
-・公開用作品情報の整理  
-・戦闘行動単位と弾倉消費の明確化  
-・スタングレネードの定義  
-・生命点0以下＝原則戦死への統一  
-・敵撤退条件の統一  
-・政治工作の端数処理修正  
-・用語揺れ／参照／目次の整理  
+---
 
-判断記録：`docs/CORE_V1_01_P0_DECISIONS.md`
+## Core Rule Source of Truth
 
-次工程は P1「GitHub内の構成整理・正本管理方法の整理」。
+コアルールの唯一の正本：
+
+`core/core-rule-full.md`
+
+旧 `build/core-full.md` と自動コピー Workflow は P1 で廃止しました。  
+現時点ではコアルールを複数ファイルへ分割しません。
 
 ---
 
 ## Scenario Structure
 
-URBAN ASSAULTのシナリオは以下の構造で制作される
+シナリオの正本テンプレート：
+
+`docs/templates/scenario_template.md`
+
+基本構造：
 
 YAMLヘッダー  
 ↓  
 シナリオ概要  
+↓  
+参加条件  
 ↓  
 プロローグ  
 ↓  
@@ -115,67 +112,123 @@ YAMLヘッダー
 ↓  
 最終イベント  
 ↓  
-エピローグ
+エピローグ／リザルト
+
+シナリオ格納：
+- `scenarios/training/`：トレーニング
+- `scenarios/missions/`：通常ミッション
+- `scenarios/_dev/`：公開可能な開発途中シナリオ
 
 ---
 
-## Game Design Characteristics
+## Publication / Copyright Policy
 
-ゲーム設計の特徴
+運用正本：
 
-・分隊単位の戦術ゲーム  
-・弾倉をリソースとする経済システム  
-・1シナリオ完結型  
-・ローグライク構造  
-・短時間プレイ  
-・判断と資源管理が中心  
+`docs/RLH_PUBLICATION_POLICY.md`
+
+原則：
+- ローグライクハーフ公式作品は設計研究の参考とする。
+- URBAN ASSAULT の本文・シナリオ・データは独自文章・独自データを原則とする。
+- d66 データの直接流用は原則として行わない。
+- 公式作品本文や再配布を許可されていない第三者著作物はリポジトリに格納しない。
+- 公開時は最新のローグライクハーフ制作利用規約を確認する。
+- RLHロゴの現行正本は `images/RLH_icon.png`。
+
+---
+
+## v1.01 Completed Work
+
+### P0 — Core cleanup / consistency
+完了。
+
+主な内容：
+- 原作抜粋表記・原作文を URBAN ASSAULT 独自文章へ置換
+- 作品情報を v1.01 へ更新
+- 射撃・弾倉・行動単位を明確化
+- 【スタングレネード】を定義
+- 技能習得数を副能力値最大値基準へ統一
+- 生命点 0 以下＝原則戦死へ統一
+- 敵戦闘集団／高脅威目標の撤退条件を統一
+- 敵攻撃配分、用語揺れ、戦利品、政治工作等を修正
+
+判断記録：  
+`docs/CORE_V1_01_P0_DECISIONS.md`
+
+### P1 — Repository structure cleanup
+完了。
+
+主な内容：
+- `core/core-rule-full.md` を唯一のコアルール正本へ統一
+- `build/` と自動コピー Workflow を廃止
+- `scenarios/misson/` → `scenarios/missions/` へ修正
+- Black Sun Protocol のファイル名 typo を修正
+- シナリオテンプレートを `docs/templates/scenario_template.md` へ統合
+- テストプレイファイル名 typo を修正
+
+判断記録：  
+`docs/REPOSITORY_STRUCTURE_P1_DECISIONS.md`
 
 ---
 
 ## Current Development Focus
 
-現在進めている作業
+次工程は、v1.01 コアルールと既存シナリオ／設計資料の互換性監査です。
 
-・コアルール v1.01 の整理  
-・GitHub構成整理  
-・シナリオフォーマット整理  
-・GitHub公開運用  
-・Markdown → PDF出版研究  
-・Mermaid図の導入  
-・無料スターター冊子制作  
+特に確認する項目：
+- 既存シナリオの `core_version: 1.00` 表記
+- 対象年齢 10～99歳など旧作品情報
+- 分隊側の `逃走` → `退却`
+- 敵側撤退条件と高脅威目標の扱い
+- 弾倉消費・1ラウンド行動単位との整合
+- 旧用語・旧章参照
+- 公開安全性と独自文章方針
+
+既存シナリオの内容変更は、ゲーム性に影響する場合はユーザー判断を得てから行います。
+
+---
+
+## Game Design Characteristics
+
+- 分隊単位の戦術ゲーム
+- 弾倉をリソースとする経済システム
+- 1シナリオ完結型
+- ローグライク構造
+- 短時間プレイ
+- 判断と資源管理が中心
 
 ---
 
 ## Future Plans
 
-将来的な計画
-
-・拡張ルール  
-・サプリメント  
-・追加シナリオ  
-・BOOTHでの有償版販売  
-・豪華組版PDF制作  
+- v1.01 の `main` 反映
+- 確認済み版の `public-release` 反映
+- 既存シナリオ v1.01 対応
+- 拡張ルール
+- サプリメント
+- 追加シナリオ
+- Markdown → PDF 出版パイプライン
+- 無料スターター冊子
+- BOOTHでの有償版販売
 
 ---
 
 ## Development Environment
 
-制作環境
-
-・iPhone中心の作業  
-・GitHubブラウザ運用  
-・Markdown編集  
-・VSCode使用  
-・インストール制限あり  
+- iPhone中心の作業
+- GitHubブラウザ運用
+- Markdown編集
+- VSCode使用
+- インストール制限あり
 
 ---
 
 ## AI Assistance Expectations
 
-AIに期待するサポート
-
-・ゲームデザイン整理  
-・シナリオ制作補助  
-・GitHub運用アドバイス  
-・出版パイプライン構築  
-・ドキュメント整備  
+- ゲームデザイン整理
+- ルール整合性監査
+- シナリオ制作補助
+- GitHub運用支援
+- 公開安全性チェック
+- 出版パイプライン構築
+- ドキュメント整備
