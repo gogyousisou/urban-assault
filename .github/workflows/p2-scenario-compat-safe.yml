@@ -1,0 +1,32 @@
+name: Apply safe v1.01 scenario compatibility fixes
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/p2-scenario-compat-safe.yml'
+      - 'scripts/apply_v101_scenario_compat_safe.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply non-gameplay compatibility fixes
+        run: python scripts/apply_v101_scenario_compat_safe.py
+
+      - name: Commit scenario compatibility fixes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add scenarios/training/d33_lvl10-11_tutorial_01_port.md scenarios/missions/d66_lvl10-16_mission_01_blacksun.md
+          git commit -m "Apply safe v1.01 scenario compatibility fixes" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
