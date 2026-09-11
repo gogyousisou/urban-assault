@@ -1,0 +1,32 @@
+name: Apply v1.01 final P0 decisions
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/p0-core-final.yml'
+      - 'scripts/apply_v101_p0_final.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply approved final P0 decisions
+        run: python scripts/apply_v101_p0_final.py
+
+      - name: Commit final P0 decisions
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add core/core-rule-full.md
+          git commit -m "Apply approved final v1.01 P0 decisions" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
