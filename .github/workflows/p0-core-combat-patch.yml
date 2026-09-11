@@ -28,6 +28,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add core/core-rule-full.md
-          git diff --cached --check
           git commit -m "Apply approved v1.01 combat rule decisions" || echo "No changes"
           git push origin HEAD:refactor/v1.01-core-cleanup
