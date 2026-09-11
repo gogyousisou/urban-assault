@@ -1,96 +1,89 @@
-# URBAN ASSAULT v1.01 — P1 GitHub構成整理 判断事項
+# URBAN ASSAULT v1.01 — P1 GitHub構成整理
 
 対象ブランチ：`refactor/v1.01-core-cleanup`
 
-P0整合修正完了後のリポジトリ構成を確認し、今後の正本管理を単純化するための判断事項をまとめます。
+P0整合修正後のリポジトリ構成を整理し、正本管理と公開運用を単純化するための判断・実施記録です。
 
-## 1. コアルール正本と `build/` — 判断必要
+## 1. コアルール正本 — 承認・反映済み
 
-現在は以下が併存しています。
+`core/core-rule-full.md` を唯一のコアルール正本とします。
 
-- 正本：`core/core-rule-full.md`
-- 複製：`build/core-full.md`
-- 自動コピー：`.github/workflows/main.yml`
-
-現状の `build/core-full.md` は旧版のままで、v1.01 の `core/core-rule-full.md` と一致していません。
-GitHub Actions の `GITHUB_TOKEN` で作成したコミットは別ワークフローを再起動しないため、更新経路によっては `build/` が追従しない状態が発生します。
-
-### 推奨案
-
-`core/core-rule-full.md` を唯一のコアルール正本として維持し、以下を削除する。
+削除済み：
 
 - `build/core-full.md`
 - `.github/workflows/main.yml`
 
-現時点ではコアルールを複数ファイルへ分割しない。
-理由は、iPhone／GitHubブラウザ中心の運用と「正本を1ファイルに固定する」方針の方が、同期漏れや生成物との不一致を防ぎやすいため。
+`build/` の複製と自動コピーを廃止し、正本と生成物の不一致が起きない構成へ変更しました。  
+現時点ではコアルールを複数ファイルへ分割しません。
 
-PDF等の生成物が必要になった時点で、GitHub上の正本を入力として出版用パイプラインを別途設計する。
+PDF 等の生成物が必要になった時点で、`core/core-rule-full.md` を入力とする出版用パイプラインを別途設計します。
 
-## 2. シナリオディレクトリ名の誤記 — 推奨修正
+## 2. シナリオディレクトリ名 — 反映済み
 
-現在：
+旧：
 
 - `scenarios/misson/`
 - `d66_lvl10-16_misson_01_blacksun.md`
 
-### 推奨案
-
-以下へ名称を修正する。
+新：
 
 - `scenarios/missions/`
 - `d66_lvl10-16_mission_01_blacksun.md`
 
-内容は変更せず、参照先がある場合は同時に更新する。
+内容は変更せず、ファイル名とディレクトリ名の typo のみ修正しました。
 
-## 3. シナリオテンプレート重複 — 判断必要
+## 3. シナリオテンプレート — 承認・反映済み
 
-現在、用途が重なる2つのテンプレートがあります。
+唯一の正本テンプレートを次へ統一しました。
+
+- `docs/templates/scenario_template.md`
+
+反映内容：
+
+- Core v1.01 対応
+- 対象年齢 12 歳以上
+- 分隊側【退却】／敵側【撤退】へ用語統一
+- 高脅威目標の撤退条件記入欄を追加
+- RLH 基本ルール・利用規約の参照先を明記
+- 公開用作品情報を現行方針へ更新
+- 制作時チェック項目を追加
+
+削除済み：
 
 - `docs/scenario_template.md`
-- `docs/templates/scnario_template.md`（ファイル名に typo）
+- `docs/templates/scnario_template.md`
 
-後者の方が詳細ですが、Core v1.00、対象年齢10～99歳、`逃走` 等の旧表記を含みます。
+## 4. テストプレイファイル名 — 反映済み
 
-### 推奨案
+旧：
 
-`docs/templates/scenario_template.md` を唯一の正本テンプレートとする。
+- `testplay/tesr_chara_KURUTU_kiyou`
 
-- 詳細版をベースに v1.01 へ更新。
-- 対象年齢を12歳以上へ統一。
-- `逃走` を分隊側の正式用語 `退却` へ統一。
-- 公開用作品情報を最新ルールへ合わせる。
-- `docs/scenario_template.md` と typo の `docs/templates/scnario_template.md` は統合後に削除。
+新：
 
-## 4. テストプレイファイル名の typo — 推奨修正
+- `testplay/test_chara_kurutu_kiyou.md`
 
-現在：`testplay/tesr_chara_KURUTU_kiyou`
+内容は変更せず、ファイル名と拡張子のみ整理しました。
 
-### 推奨案
+## 5. `scenarios/_dev/` — 現状維持
 
-内容を確認した上で、Markdownであれば拡張子を含む分かりやすい英数字名へ変更する。
-例：`testplay/test_chara_kurutu_kiyou.md`
+公開されても問題のない開発途中シナリオは `_dev/` に置いて構いません。  
+非公開資料、第三者著作物本文、秘密情報は格納しません。
 
-## 5. `scenarios/_dev/` の扱い — 現状維持を推奨
+## 6. コアルール表紙画像 — 現状維持
 
-`main` は公開可能な開発正本とする方針が確定しているため、公開されても問題のない開発途中シナリオは `_dev/` に置いてよい。
+`core/assets/` の表紙画像 3 点は P1 では削除しません。  
+出版パイプライン設計時に採用版を決定します。
 
-非公開資料や第三者著作物本文を `_dev/` に置くことはしない。
+## P1完了条件
 
-## 6. コアルール表紙画像 — 現時点では削除しない
+以下を確認済みです。
 
-`core/assets/` には以下の3画像があります。
+- コアルール正本は `core/core-rule-full.md` の 1 本のみ。
+- `build/` と自動コピー Workflow は現行ツリーから削除済み。
+- `scenarios/missions/` へ名称修正済み。
+- シナリオテンプレートは `docs/templates/scenario_template.md` の 1 本へ統合済み。
+- テストプレイファイル名の typo を修正済み。
+- 一時的な移行用 Workflow／Script は削除済み。
 
-- `UAxRLH_core_cover_base.png`
-- `UAxRLH_core_cover_ura_base_1.png`
-- `UAxRLH_core_cover_ura_base_2.png`
-
-どの版を今後使うかは見た目・出版方針に関わるため、P1では削除しない。
-重複整理はPDF／スターター冊子の出版パイプライン設計時に判断する。
-
-## P1でユーザー判断が必要な項目
-
-1. `build/` と自動コピーWorkflowを廃止し、`core/core-rule-full.md` を唯一の正本にするか。
-2. シナリオテンプレートを `docs/templates/scenario_template.md` 1本へ統合するか。
-
-上記2点が承認された場合、ディレクトリ名・ファイル名の typo 修正を含めてP1整理を実施する。
+P1 GitHub構成整理は完了とします。
