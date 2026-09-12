@@ -6,7 +6,7 @@
 
 - `scenarios/training/d33_lvl10-11_tutorial_01_port.md`
 - `scenarios/training/d33_lvl10-11_tutorial_02_contact.md`
-- `scenarios/missions/d66_lvl12-16_mission_01_blacksun.md`
+- `scenarios/missions/d66_lvl10-16_mission_01_blacksun.md`
 
 P0 で確定した Core v1.01 と、既存シナリオの互換性を確認・反映した記録です。
 
@@ -60,11 +60,11 @@ P0 で確定した Core v1.01 と、既存シナリオの互換性を確認・�
 
 ### 3-1. Black Sun Protocol の推奨レベル
 
-12～16 に統一しました。
+ユーザー訂正により、推奨レベルは **10～16** に統一しました。
 
-- ファイル名：`d66_lvl12-16_mission_01_blacksun.md`
-- YAML：`recommended_level: 12-16`
-- 本文：経験点12以上／適正レベル12-16
+- ファイル名：`d66_lvl10-16_mission_01_blacksun.md`
+- YAML：`recommended_level: 10-16`
+- 本文：経験点10以上／適正レベル10-16
 
 ### 3-2. IRストロボライト／航空支援
 
