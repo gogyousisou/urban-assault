@@ -1,0 +1,32 @@
+name: Apply remaining training v1.01 safe fixes
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/apply-training02-v101-safe-fixes.yml'
+      - 'scripts/apply_training02_v101_safe_fixes.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply remaining training compatibility fixes
+        run: python scripts/apply_training02_v101_safe_fixes.py
+
+      - name: Commit training compatibility fixes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add scenarios/training/d33_lvl10-11_tutorial_01_port.md scenarios/training/d33_lvl10-11_tutorial_02_contact.md
+          git commit -m "Apply remaining training v1.01 compatibility fixes" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
