@@ -1,0 +1,32 @@
+name: Apply user corrections for level and critical chain
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/apply-user-corrections-level-and-critical.yml'
+      - 'scripts/apply_user_corrections_level_and_critical.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply corrected level and chained critical rule
+        run: python scripts/apply_user_corrections_level_and_critical.py
+
+      - name: Commit corrections
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A core/core-rule-full.md scenarios/missions docs/SCENARIO_V1_01_COMPATIBILITY_AUDIT.md docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md
+          git commit -m "Apply corrected Black Sun level and chained critical rule" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
