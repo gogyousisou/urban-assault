@@ -9,4 +9,19 @@ if old not in text:
 scenario.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 audit = Path("docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md")
-a = audit.read_text(encoding="utf-8")n
+a = audit.read_text(encoding="utf-8")
+section = """
+
+## 11. Black Sun 2周目最終イベントの波状防衛 — 採用済み
+
+ユーザー承認により、2周目最終イベントは3ラウンド固定の波状防衛戦として扱います。
+
+- ラウンド途中で民兵が一時的に0名になっても、その時点では戦闘終了としない。
+- 敵が0名の間は敵からの攻撃は発生しない。
+- 2ラウンド目および3ラウンド目の開始時には、予定どおり民兵 `2 + 1d3` 名の増援を追加する。
+- 3ラウンド終了後、救出部隊到着により戦闘終了とする。
+
+これにより、クリティカル連鎖や航空支援で一時的に敵を全滅させた場合でも、成果は「早期終了」ではなく次の増援波への安全余裕として扱います。
+"""
+if "## 11. Black Sun 2周目最終イベントの波状防衛 — 採用済み" not in a:
+    audit.write_text(a.rstrip() + section + "\n", encoding="utf-8")
