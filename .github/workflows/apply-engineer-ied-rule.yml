@@ -1,0 +1,32 @@
+name: Apply approved engineer IED rule
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/apply-engineer-ied-rule.yml'
+      - 'scripts/apply_engineer_ied_rule.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply engineer IED rule
+        run: python scripts/apply_engineer_ied_rule.py
+
+      - name: Commit approved rule
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add core/core-rule-full.md docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md
+          git commit -m "Apply approved engineer IED rule" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
