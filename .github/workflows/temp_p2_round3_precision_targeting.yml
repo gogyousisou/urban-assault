@@ -1,0 +1,33 @@
+name: temp-p2-round3-precision-targeting
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Apply approved round-three precision-targeting rule
+        run: python .github/scripts/temp_p2_round3_precision_targeting.py
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scenarios/missions/d66_lvl10-16_mission_01_blacksun.md docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md
+          git commit -m "fix: clarify Black Sun round-three precision targeting [skip ci]"
+          git push origin HEAD:refactor/v1.01-core-cleanup
