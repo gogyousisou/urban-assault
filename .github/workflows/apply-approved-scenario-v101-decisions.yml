@@ -1,0 +1,32 @@
+name: Apply approved v1.01 scenario decisions
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/apply-approved-scenario-v101-decisions.yml'
+      - 'scripts/apply_approved_scenario_v101_decisions.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply approved scenario decisions
+        run: python scripts/apply_approved_scenario_v101_decisions.py
+
+      - name: Commit approved scenario changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A scenarios/training/d33_lvl10-11_tutorial_01_port.md scenarios/missions
+          git commit -m "Apply approved v1.01 scenario compatibility decisions" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
