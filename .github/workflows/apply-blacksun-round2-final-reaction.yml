@@ -1,0 +1,32 @@
+name: Apply approved Black Sun round 2 reaction
+
+on:
+  push:
+    branches:
+      - refactor/v1.01-core-cleanup
+    paths:
+      - '.github/workflows/apply-blacksun-round2-final-reaction.yml'
+      - 'scripts/apply_blacksun_round2_final_reaction.py'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+          fetch-depth: 0
+
+      - name: Apply approved reaction
+        run: python scripts/apply_blacksun_round2_final_reaction.py
+
+      - name: Commit approved reaction
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add scenarios/missions/d66_lvl10-16_mission_01_blacksun.md docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md
+          git commit -m "Apply Black Sun round 2 final reaction" || echo "No changes"
+          git push origin HEAD:refactor/v1.01-core-cleanup
