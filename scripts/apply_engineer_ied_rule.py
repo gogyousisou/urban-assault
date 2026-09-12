@@ -15,7 +15,11 @@ text = replace_once(text, old, new, "engineer IED rule")
 core_path.write_text(text, encoding="utf-8")
 
 audit_path = Path("docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md")
-audit = audit_path.read_text(encoding="utf-8")naudit = audit.replace("ただし、コンバットエンジニアの対車両IED能力は使用タイミングと行動消費が未定義のため、上記計算には含めていません。", "コンバットエンジニアのIED能力は、承認済み仕様（1作戦1回・通常ラウンドで自身の攻撃の代わり・判定不要・弾倉消費なし・車両／装甲属性の高脅威目標へ1ダメージ）として扱います。")
+audit = audit_path.read_text(encoding="utf-8")
+audit = audit.replace(
+    "ただし、コンバットエンジニアの対車両IED能力は使用タイミングと行動消費が未定義のため、上記計算には含めていません。",
+    "コンバットエンジニアのIED能力は、承認済み仕様（1作戦1回・通常ラウンドで自身の攻撃の代わり・判定不要・弾倉消費なし・車両／装甲属性の高脅威目標へ1ダメージ）として扱います。",
+)
 marker = "## 9. テストを止めている次のルール判断"
 if marker not in audit:
     raise SystemExit("audit marker not found")
