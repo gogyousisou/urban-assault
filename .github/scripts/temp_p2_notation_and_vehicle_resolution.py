@@ -2,16 +2,16 @@ from pathlib import Path
 
 core = Path("core/core-rule-full.md")
 c = core.read_text(encoding="utf-8")
-old = """`1d3` を求める場合は 1d6 を振り、1～2 を 1、3～4 を 2、5～6 を 3 として扱います。\n\n`d66` は 1d6 を 2 回振り、最初の出目を十の位、次の出目を一の位として 11～66 の結果を作る方法です。\n"""
-new = """`1d2` を求める場合は 1d6 を振り、1～3 を 1、4～6 を 2 として扱います。\n\n`1d3` を求める場合は 1d6 を振り、1～2 を 1、3～4 を 2、5～6 を 3 として扱います。\n\n`d66` は 1d6 を 2 回振り、最初の出目を十の位、次の出目を一の位として 11～66 の結果を作る方法です。\n"""
+old = "`1d3` を求める場合は 1d6 を振り、1～2 を 1、3～4 を 2、5～6 を 3 として扱います。"
+new = "`1d2` を求める場合は 1d6 を振り、1～3 を 1、4～6 を 2 として扱います。\n\n`1d3` を求める場合は 1d6 を振り、1～2 を 1、3～4 を 2、5～6 を 3 として扱います。"
 if c.count(old) != 1:
     raise SystemExit(f"core dice target count must be 1, got {c.count(old)}")
 core.write_text(c.replace(old,new,1), encoding="utf-8")
 
 scenario = Path("scenarios/missions/d66_lvl10-16_mission_01_blacksun.md")
 s = scenario.read_text(encoding="utf-8")
-old2 = """    - 対戦車砲が攻撃するたび、防御ロールの前に【着弾対象ロール】として1d6を振る。奇数なら分隊長、偶数なら分隊員側を攻撃対象とする。\n"""
-new2 = """    - 対戦車砲の攻撃は民兵の攻撃回数とは合算せず、独立して処理する。対戦車砲が攻撃するたび、防御ロールの前に【着弾対象ロール】として1d6を振る。奇数なら分隊長、偶数なら分隊員側を攻撃対象とする。民兵側の攻撃はCore v1.01の通常の【敵戦闘集団】として処理する。\n"""
+old2 = "    - 対戦車砲が攻撃するたび、防御ロールの前に【着弾対象ロール】として1d6を振る。奇数なら分隊長、偶数なら分隊員側を攻撃対象とする。"
+new2 = "    - 対戦車砲の攻撃は民兵の攻撃回数とは合算せず、独立して処理する。対戦車砲が攻撃するたび、防御ロールの前に【着弾対象ロール】として1d6を振る。奇数なら分隊長、偶数なら分隊員側を攻撃対象とする。民兵側の攻撃はCore v1.01の通常の【敵戦闘集団】として処理する。"
 if s.count(old2) != 1:
     raise SystemExit(f"vehicle target count must be 1, got {s.count(old2)}")
 scenario.write_text(s.replace(old2,new2,1), encoding="utf-8")
