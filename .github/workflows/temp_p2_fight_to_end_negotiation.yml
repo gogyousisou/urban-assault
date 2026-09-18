@@ -1,0 +1,22 @@
+name: temp-p2-fight-to-end-negotiation
+on:
+  push:
+    branches: [refactor/v1.01-core-cleanup]
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refactor/v1.01-core-cleanup
+      - name: Apply approved fight-to-end negotiation rule
+        run: python .github/scripts/temp_p2_fight_to_end_negotiation.py
+      - name: Save changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add core/core-rule-full.md scenarios/missions/d66_lvl10-16_mission_01_blacksun.md docs/CORE_V1_01_P0_DECISIONS.md docs/SCENARIO_V1_01_RESOURCE_BALANCE_AUDIT.md
+          git diff --cached --quiet || git commit -m "feat: separate fight-to-end from negotiation immunity [skip ci]"
+          git push
