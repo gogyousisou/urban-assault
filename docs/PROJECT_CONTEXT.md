@@ -88,23 +88,25 @@ v1.01 はまだ `main` / `public-release` へ反映していません。
 
 ## Scenario Structure
 
-シナリオの正本テンプレート：
+公開側の人間向けシナリオ本文テンプレート：
 
 `docs/templates/scenario_template.md`
 
-基本構造：
+制作工程の編集正本は、private authoringリポジトリ `gogyousisou/urban-assault-authoring` で管理するMarkdown本文＋YAMLサイドカーです。各イベント／独立処理では `logic_authority: ledger | prose | mixed` により処理正本を明示します。構造化可能な処理はYAML台帳を標準正本とし、文章と不可分な処理はMarkdown本文または併用を選択できます。JSON Schema・検証・PDF/TXTビルド基盤はauthoring側で管理し、公開側へprivate制作資産をそのまま複製しません。
 
-YAMLヘッダー  
+公開本文の基本構造：
+
+作品情報  
 ↓  
-シナリオ概要  
+シナリオ概要／任務・成功・失敗・終了条件  
 ↓  
-参加条件  
+参加条件・初期資源  
 ↓  
 プロローグ  
 ↓  
 特殊ルール  
 ↓  
-マップ構造  
+マップ／進行構造  
 ↓  
 ランダムイベント  
 ↓  
@@ -113,6 +115,8 @@ YAMLヘッダー
 最終イベント  
 ↓  
 エピローグ／リザルト
+
+標準d33は9枠とし、変則型は有効出目を明示します。d66はカテゴリ番号を固定せず、カテゴリIDと役割を宣言します。読み上げ文／フレーバーと必須処理は分離します。
 
 シナリオ格納：
 - `scenarios/training/`：トレーニング
