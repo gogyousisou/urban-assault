@@ -36,9 +36,9 @@ mode: 一本道
 
 ---
 
-## 02. URBAN ASSAULT x ローグライクハーフを遊ぶにあたり
+## 02. URBAN ASSAULT × ローグライクハーフを遊ぶにあたり
 
-「URBAN ASSAULT x ローグライクハーフ」はルールを確認した後に遊ぶゲームです。  
+「URBAN ASSAULT × ローグライクハーフ」はルールを確認した後に遊ぶゲームです。  
 ルールは下記アドレスで確認することができます。(無料)  
 
 > https://github.com/gogyousisou/urban-assault/blob/public-release/core/core-rule-full.md  
