@@ -48,3 +48,7 @@ URBAN ASSAULT の本文・シナリオ・データは、独自文章・独自デ
 > https://ftbooks.xyz/ftnews/gamebook/RogueLikeHalf_TOS.pdf
 
 詳細な運用方針は `docs/RLH_PUBLICATION_POLICY.md` を参照してください。
+
+## 作者表記
+
+URBAN ASSAULTの作者名は **ぜっとん** です。今後の本文・付録・配布物も同じ表記を使用します。詳細は [作者表記方針](docs/AUTHOR_CREDIT_POLICY.md) を参照してください。
