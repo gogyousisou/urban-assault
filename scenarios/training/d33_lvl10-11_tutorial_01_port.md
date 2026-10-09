@@ -6,6 +6,8 @@ scenario_id: d33-training-01
 recommended_level: 10-11  
 mode: 一本道
 
+> 作：ぜっとん  
+
 ## 01. シナリオ概要
 
 これはローグライクハーフをベースにした現代戦バリアントルール  

@@ -11,7 +11,7 @@ recommended_level: 10-11
 player_count: 1-2  
 playtime: 15-30分  
 mode: 一本道 / マップ探索  
-author:  
+author: ぜっとん  
 version:  
 
 ---
