@@ -1,0 +1,1253 @@
+ledger_version: '0.5'
+document:
+  document_id: ua_tutorial_part2_clear_passage
+  document_type: scenario
+  title: OPEN THE WAY — 開通
+  authors:
+  - ぜっとん
+  version: 1.0.0
+  language: ja-JP
+  source_files:
+  - path: scenarios/tutorial/part2/ua_tutorial_part2_clear_passage.md
+    role: body
+    chapter_order: 10
+    required: true
+  output_basename: open-the-way-v1.0.0
+  release_status: released
+  revision_history:
+  - version: 1.0.0
+    date: '2026-10-26'
+    summary: 作者校正済みv0.3.8を初版として確定。9マップ・中間/最終の現行本文へ台帳を同期。物語・数値は維持。前付けに原作表示と公式入手先を補完。
+scenario:
+  core_version: '1.01'
+  format: d33
+  modes:
+  - solo
+  - cooperative
+  status: release
+play:
+  player_count:
+    min: 1
+    max: 2
+  primary_player_count: 1
+  reading_mode: single_reader
+  two_player_support:
+    enabled: true
+    prose_policy: solo_base_with_differences
+    adjustment_summary: 分隊の編成と戦闘はCore第45章に従う。シナリオの弾倉・通常履歴・敵数・補給・反応表の回数は二人で共有。各マップの細部は本文とCoreに従う。
+  recommended_level:
+    min: 10
+    max: 11
+  playtime_minutes:
+    min: 30
+    max: 45
+  gm_required: false
+  difficulty: variable
+dependencies:
+- dependency_id: ua_core
+  kind: core
+  title: URBAN ASSAULT Core v1.01（2026-10-17更新版）
+  required: true
+  min_version: '1.01'
+  url: https://github.com/gogyousisou/urban-assault/blob/bdc672bd393cf3f97d7e72ccab85457706755179/core/core-rule-full.md
+  fallback: 代替不可。プレイヤー向け入手先は本文のBOOTH URL。検証参照は上記commitで固定。
+objectives:
+- objective_id: main_objective
+  objective: 市街地の道路と橋の通行を確保し、医療物資を積んだ車列を救護所へ到着させる。
+  success:
+    condition_id: success_condition
+    statement: 最終イベントで敵兵と装甲車両を戦闘対象から除外し、車列の救護所到着を確認する。
+  failure:
+    condition_id: failure_condition
+    statement: 分隊長の戦死、任務放棄、中間イベントまたは最終イベントからの分隊退却。
+  partial_success: null
+  end_condition:
+    condition_id: end_condition_condition
+    statement: 成功または失敗が確定したら作戦を終了する。
+participants: []
+entities:
+  enemies:
+  - id: armed_level3
+    name: 武装した民間人・検問の敵兵
+    threat_class: enemy_group
+    level: 3
+    attributes:
+    - person
+  - id: armed_level4
+    name: 橋の敵兵
+    threat_class: enemy_group
+    level: 4
+    attributes:
+    - person
+  - id: road_heavy
+    name: 重火器班
+    threat_class: high_threat_target
+    level: 4
+    hp: 2
+    attacks_per_round: 1
+    attributes:
+    - person
+  - id: bridge_vehicle
+    name: 有人装甲車両
+    threat_class: high_threat_target
+    level: 5
+    hp: 3
+    attacks_per_round: 2
+    attributes:
+    - vehicle
+    - armor
+  npcs:
+  - id: local_contacts
+    name: 自警団・衛生兵・補給兵・工兵・偵察兵
+    level: null
+  - id: dispatch_staff
+    name: 車列の運転手・救護所の担当者
+    level: null
+  locations:
+  - id: distribution_district
+    name: 市街地の道路・橋・救護所
+    level: null
+resources:
+- resource_id: magazines
+  unit: 弾倉
+  owner_scope: operation
+  initial: EASY8／NORMAL6／HARD4。2人でも作戦全体の共有支給。
+  maximum: null
+  grant_timing: operation_start
+  grant_scope: each_operation
+  return_policy: 通常退却や再遭遇では再支給しない。
+  carryover: 作戦間・部隊再編はCoreに従う。Coreの追加弾倉等を無効化しない。
+  settlement: 残弾倉はCore第44章に従う。
+- resource_id: mre
+  unit: 食
+  owner_scope: leader
+  initial: Coreの規定に従い各分隊長2食。
+  maximum: null
+  grant_timing: operation_start
+  grant_scope: each_operation
+  return_policy: 各マップの獲得・提供によって増減する。
+  carryover: Core第31章に従う。
+  settlement: Coreに従う。
+progression:
+  progression_id: main_route
+  mode: d33
+  progression_profile: compact_3_3
+  normal_event_count: 6
+  first_phase_event_count: 3
+  second_phase_event_count: 3
+  midpoints:
+  - midpoint_dispatch
+  midpoint_condition: 通常3件解決後に一度だけ解決する。
+  finals:
+  - final_arrival
+  final_condition: 通常6件と中間イベントを解決したら最終イベントへ進む。
+  retreat:
+    allowed: true
+    destination: progression
+    consequence: 通常戦闘では未解決・件数加算なし。次回のd33決定時だけ当該マップを除外。中間・最終からの分隊退却は作戦失敗。
+  reentry:
+    allowed: true
+    destination: progression
+    consequence: 次回決定後は直前退却による除外を解除。再遭遇した相手は初期状態に戻すが、分隊の消費・損耗は保持。部隊再編はCoreに従う。
+  transition_priority:
+  - 分隊長戦死・任務放棄・固定イベント退却による失敗
+  - 最終イベントの成功
+  - 通常3件で中間
+  - 通常6件で最終
+  - 通常イベント決定
+tables:
+- table_id: main_d33
+  kind: d33
+  variant: standard
+  standard_slots: 9
+  valid_results:
+  - 11
+  - 12
+  - 13
+  - 21
+  - 22
+  - 23
+  - 31
+  - 32
+  - 33
+  entries:
+    '11': event_11
+    '12': event_12
+    '13': event_13
+    '21': event_21
+    '22': event_22
+    '23': event_23
+    '31': event_31
+    '32': event_32
+    '33': event_33
+  duplicate_policy: 解決済みと、次回決定時だけ直前退却マップを飛ばし、最初の未解決・選択可能な出目を採用。
+  wrap_policy: 11→12→13→21→22→23→31→32→33→11。振り直しなし。
+  exhaustion_policy: 通常6件で表を終了。通常決定時は解決済み最大5件・直前退却除外最大1件で、候補は少なくとも3件残る。
+events:
+- event_id: prologue
+  source_ref: main_route
+  event_role: support
+  category_id: null
+  title: プロローグ
+  logic_authority: prose
+  text_anchor: prologue
+  logic_summary:
+    summary: '救護所へ医療物資を届ける車列が、市街地の手前で止まっていた。橋へ続く道路には敵の検問があり、橋の入口にも装甲車両を伴う部隊が居座っている。車列は、その二か所を通らなければ救護所へ着けない。
+
+      車列を待機させ、分隊は市街地へ先行する。道路と橋の通行を確保してから、車列を呼び寄せる手はずだった。手持ちの弾薬だけで戦い続ける余裕はない。道中物資を集めながら、道路と橋の通行を確保する。
+
+      - 任務：道路と橋を通れる状態にし、医療物資を届ける。
+
+      - 成功：最終イベントを解決し、車列の救護所到着を確認する。
+
+      - 失敗：分隊長の戦死、任務放棄、中間イベントまたは最終イベントからの分隊退却。
+
+      成功または失敗が確定したら、作戦を終了します。車列の到着確認に追加の判定はありません。
+
+      | 出目 | イベント | 属性 |
+
+      |---|---|---|
+
+      | 11 | 待機所の配給 | 屋外 |
+
+      | 12 | 救護所での処置 | 室内 |
+
+      | 13 | 路肩の補給車 | 屋外 |
+
+      | 21 | AT4 | 屋外 |
+
+      | 22 | 放棄された補給所 | 室内 |
+
+      | 23 | 補給品の運搬 | 屋外 |
+
+      | 31 | 集合地点の物資交換 | 屋外 |
+
+      | 32 | 帰還を待つ工兵 | 屋外 |
+
+      | 33 | 偵察兵の案内 | 屋外 |
+
+      各マップの選択は、一度だけ行います。支払いや受入条件を確認してから選んでください。'
+    success: 本文に定めた成功・解決条件を満たす。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 分隊と開始物資を準備済み。
+  repeat_policy: 該当する進行段階で一度。
+  situation: プロローグ
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates: []
+  transition:
+    destination: progression
+    counts_as_normal_event: false
+  read_aloud: null
+- event_id: event_11
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 待機所の配給
+  logic_authority: prose
+  text_anchor: event-11
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      自警団の詰所に、車列の待機所から配給が届いていた。担当者は、橋へ先行する分隊に弾薬か携行食を分けられるという。残りは車列の警戒に回すため、持ち出せるのは一方だけだ。
+
+      | 選択 | 取得 |
+
+      |---|---|
+
+      | 弾薬を受け取る | 弾倉2個 |
+
+      | 食料を受け取る | MRE 1食 |'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 待機所の配給
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_12
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 救護所での処置
+  logic_authority: prose
+  text_anchor: event-12
+  logic_summary:
+    summary: '**マップ属性：【室内】**
+
+      撤収中の救護所で、衛生兵が分隊を呼び止めた。出発までなら傷の処置ができる。今は必要がなければ、予備の医療キットを持っていけるという。処置用の物資は限られ、両方を頼むことはできない。
+
+      その場で処置を受けるか、キットを持ち帰るかを選んでください。
+
+      | 選択 | 効果・取得 |
+
+      |---|---|
+
+      | 処置を受ける | 分隊長の生命点2回復、負傷を0にする |
+
+      | キットを受け取る | 医療キット1個 |
+
+      処置による生命点は最大値を超えません。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 救護所での処置
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: indoor
+- event_id: event_13
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 路肩の補給車
+  logic_authority: prose
+  text_anchor: event-13
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      道路脇に補給トラックが一台止まっている。そばには小銃を持つ三人の民間人がいた。服装は不揃いで、所属を示す腕章も見当たらない。二人が荷台の弾薬箱を調べ、残る一人が道路を見張っている。
+
+      分隊は建物の陰から様子をうかがった。自警団なのか、武装勢力の一員なのかは分からない。足元には運搬中に落とされたらしい弾倉が一個ある。相手はまだ分隊に気づいていない。弾倉だけ拾って離れるか、三人へ接触するか。
+
+      - 戦闘集団：武装した民間人／レベル3／人数3名
+
+      - 接触：【回避】／【先制攻撃】／【反応を見る】
+
+      接触を避ける場合は、弾倉1個を回収して解決します。接触する場合は、先制攻撃するか反応を見るかを選んでください。戦闘になった場合は、Coreの敵戦闘集団として扱います。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退 |
+
+      | 2〜3 | 物資要求：弾倉2個。受諾時にフラッシュバン1個と交換 |
+
+      | 4〜6 | 敵対的 |
+
+      物資要求では、手持ちの弾倉2個を渡す代わりに、相手が持つフラッシュバン1個を受け取れます。要求を拒否した場合や支払えない場合は敵対的となります。先攻と撤退の扱いはCoreに従います。
+
+      | 解決方法 | 取得 |
+
+      |---|---|
+
+      | 回避、戦闘前の相手の撤退 | 弾倉1個 |
+
+      | 物資要求を受諾 | 弾倉2個を支払い、フラッシュバン1個を取得 |
+
+      | 戦闘で全員が全滅・撤退・捕虜化により除外 | 弾倉4個 |
+
+      | 分隊退却 | 獲得なし・未解決 |
+
+      獲得物は該当する行だけを適用します。フラッシュバンの使用条件と効果はCoreに従ってください。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 分隊長戦死・任務放棄は作戦失敗。分隊退却の場合は未解決。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level3
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 路肩の補給車
+  checks: []
+  combat_ref: combat_event_13
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+    alternatives:
+    - condition:
+        condition_id: event_13_retreat
+        statement: 分隊が退却した場合。
+      destination: progression
+      counts_as_normal_event: false
+    - condition:
+        condition_id: event_13_failure
+        statement: 分隊長戦死または任務放棄。
+      destination: scenario_end
+      counts_as_normal_event: false
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_21
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: AT4
+  logic_authority: prose
+  text_anchor: event-21
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      味方の補給担当兵が、道路脇で分隊を待っていた。橋の装甲車両に備えたAT4が一本ある。通常弾薬を優先するなら、代わりに弾倉を二個渡せるという。
+
+      | 選択 | 取得 |
+
+      |---|---|
+
+      | 通常弾薬を受け取る | 弾倉2個 |
+
+      | 対装甲装備を受け取る | AT4一本 |
+
+      AT4の最大携行数は一本です。所持済みの場合は、弾倉を選ぶか、所持品を破棄して交換してください。装備の使用はCoreに従います。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: AT4
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_22
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 放棄された補給所
+  logic_authority: prose
+  text_anchor: event-22
+  logic_summary:
+    summary: '**マップ属性：【室内】**
+
+      放棄された補給所に、弾薬箱が積まれていた。入口近くには使える弾倉が一個ある。奥の箱にはまだ中身がありそうだが、空箱や破損品と混ざっている。
+
+      手近な物資を回収するか、奥を捜索するかを選んでください。
+
+      | 選択 | 判定 | 取得 |
+
+      |---|---|---|
+
+      | 手近な物資を回収 | なし | 弾倉1個 |
+
+      | 奥を捜索 | 分隊長の技量ロール、目標値4 | 成功：弾倉4個／失敗：弾倉1個、負傷＋1 |
+
+      捜索中、崩れた箱に足を取られるおそれがあります。判定は一回です。失敗した場合も入口の弾倉1個は回収できますが、分隊長は負傷＋1を受けます。負傷の上限と効果はCoreに従います。成功時の弾倉4個には、入口の1個も含みます。成否にかかわらずイベントは解決です。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 放棄された補給所
+  checks:
+  - check_id: search_supply
+    actor_scope: 分隊長
+    ability: 技量
+    target_number: 4
+    success: 弾倉4個を取得（入口の1個を含む）。
+    failure: 弾倉1個を取得し、分隊長の負傷＋1。イベントは解決。
+    retry: 判定は一回。
+    unavailable: 手近な弾倉1個の回収を選べる。
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: indoor
+- event_id: event_23
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 補給品の運搬
+  logic_authority: prose
+  text_anchor: event-23
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      味方の補給兵が、道路脇に積んだ弾薬箱を確かめていた。後方の車列へ運ぶ荷物が残っており、人手が足りないという。すぐに渡せる弾倉は一個だけだが、分隊から一人を運搬に回せば、橋へ向かう分隊へ四個を融通できる。
+
+      同行する隊員を維持するか、一人を後方の運搬任務に回すかを選んでください。
+
+      | 選択 | 同行隊員 | 取得 |
+
+      |---|---|---|
+
+      | 現編成を維持 | 変化なし | 弾倉1個 |
+
+      | 運搬役を派遣 | 一名が後方へ離脱 | 弾倉4個 |
+
+      運搬役には、同行している生存戦闘員一名を指定します。分隊長、非戦闘員、狙撃ポイントの隊員は選べません。同行戦闘員がいない場合は、現編成を維持してください。
+
+      派遣した隊員は作戦終了まで戻らず、戦闘の人数・被弾候補から外れ、能力も使用できません。装備や未使用のIEDを分隊へ譲渡することはできません。
+
+      分隊規模の最大値は変わらず、同行枠が一名分空きます。運搬役は戦死・脱落扱いにはせず、作戦終了後に合流します。取得する弾倉は表の個数だけです。どちらを選んでもイベントは解決します。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 補給品の運搬
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_31
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 集合地点の物資交換
+  logic_authority: prose
+  text_anchor: event-31
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      集合地点では、車列を待つ警戒班が残った食事を分け合っていた。車列の到着が遅れ、携行食が足りていないという。班長は、食料を融通してもらえるなら予備の弾薬か手榴弾を渡せると申し出た。
+
+      次のいずれか一つを選んでください。交換には、所持しているMREを使います。
+
+      | 選択 | 支払い | 取得 |
+
+      |---|---|---|
+
+      | 弾薬へ交換 | MRE 1食 | 弾倉2個 |
+
+      | 手榴弾へ交換 | MRE 2食 | フラググレネード1個 |
+
+      | 交換しない | なし | なし |
+
+      必要な食料がない場合、その交換は選べません。支払いを差し引いてから、獲得物を記録してください。フラググレネードの使用条件と効果はCoreに従ってください。
+
+      交換しない場合もイベントは解決です。後から戻って交換することはできません。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 集合地点の物資交換
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_32
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 帰還を待つ工兵
+  logic_authority: prose
+  text_anchor: event-32
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      集合地点の脇で、味方の工兵一人が工作道具を点検していた。道路の障害物を処理して戻ったところだが、携行食を持っていないそうだ。分隊の食料を一食分けてほしいという。
+
+      **中間イベントをまだ解決していない場合：**工兵には付近の障害物を処理する仕事が残っている。食料を分けてもらえれば、予備の手榴弾を分隊へ渡せるという。
+
+      **中間イベント解決後の場合：**道路が開き、工兵も担当作業を終えていた。食事を済ませれば、橋へ向かう分隊に同行できるという。
+
+      MRE 1食を提供するか、提供せずに進むかを選んでください。提供した場合の対価は、訪問時期によって変わります。
+
+      | 訪問時期 | 支払い | 取得 |
+
+      |---|---|---|
+
+      | 中間イベント前 | MRE 1食 | フラググレネード1個 |
+
+      | 中間イベント解決後 | MRE 1食 | 工兵一名の加入 |
+
+      前半に解決した場合、中間イベント後に戻って工兵を迎えることはできません。提供を断った場合も、獲得なしでイベントは解決です。
+
+      手榴弾を受け取る場合は、使用条件と持ち物上限を確認してください。効果はCoreに従います。
+
+      分隊規模に空きがなければ、支払い前に既存の随伴隊員一名と交代するか決めてください。交代した隊員は後方へ帰還し、以降の戦闘には参加しません。後方隊員の装備から弾倉・軍票などを得ることはできません。
+
+      | 項目 | 加入時の状態 |
+
+      |---|---|
+
+      | 隊員 | コンバットエンジニア（Coreの工兵） |
+
+      | 技量点／生命点／射撃回数 | 0／1／1回 |
+
+      | 装備 | AR |
+
+      | 特殊能力 | トラップ解除判定＋1、IED未使用 |
+
+      | 追加物資 | なし |
+
+      工兵を受け入れられない場合は、加入を選べません。IEDは第1ラウンド以降、工兵自身の攻撃の代わりに使用できます。一作戦一回、車両・装甲属性の高脅威目標一体に、判定・弾倉消費なしで1ダメージを与えます。敵集団が残っていても、車両・装甲属性の高脅威目標を直接指定できます。工兵が脱落した場合は、未使用のIEDも失われます。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 帰還を待つ工兵
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: event_33
+  source_ref: main_d33
+  event_role: normal
+  category_id: null
+  title: 偵察兵の案内
+  logic_authority: prose
+  text_anchor: event-33
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      味方の偵察兵が、検問や橋へ近づく道を確かめていた。建物と塀に沿えば、敵の射撃を避けやすい場所へ分隊を導けるという。予備の弾薬を取りに戻ることもできるが、出発までに両方は間に合わない。
+
+      弾薬を受け取るか、次の固定イベントに備えて案内を頼むかを選んでください。
+
+      | 選択 | 効果・取得 |
+
+      |---|---|
+
+      | 弾薬を受け取る | 弾倉2個 |
+
+      | 案内を受ける | 次の固定イベントの第1ラウンドだけ、分隊長・同行戦闘員の防御ロール＋1 |
+
+      案内の対象は、前半なら中間イベント、後半なら最終イベントです。記録欄に対象を書いてください。先攻順や敵の反応は変わりません。
+
+      防御修正は敵先攻の場合も適用します。第0ラウンドと第2ラウンド以降、通常マップの戦闘には適用しません。防具・負傷などの修正は通常どおりです。
+
+      どちらを選んでもイベントは解決します。対象の固定イベントを終えたら、案内の記録を消してください。戦闘にならなかった場合や、防御する前に戦闘が終わった場合も、補給への変更や効果の持越しはできません。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 選択肢の不成立・判定失敗の結果と進行は本文に従う。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常マップを決める段階で、当該マップが未解決かつ選択可能。
+  repeat_policy: 通常マップの選択は一度。分隊退却した戦闘は未解決とし、本文の再選択に従う。
+  situation: 偵察兵の案内
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates:
+  - 解決した通常出目を記録し、通常件数に1を加える。
+  transition:
+    destination: progression
+    counts_as_normal_event: true
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: midpoint_dispatch
+  source_ref: main_route
+  event_role: midpoint
+  category_id: null
+  title: 道路の検問
+  logic_authority: prose
+  text_anchor: midpoint-dispatch
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      交差点の先で、バリケードが車道を塞いでいた。小銃を持つ敵兵三人が柵の手前で通行車を止め、その後ろには重火器班が一組、陣取っている。敵はこの歩兵集団と重火器班の二単位で、装甲車両はいない。車列がここへ進めば、逃げ場のない道路で射撃を受ける。
+
+      分隊は建物の陰で足を止めた。敵はまだ撃っていない。先に仕掛けるか、姿を見せて相手の出方を確かめるか。道路を通れる状態にして、待機中の車列へ連絡する必要がある。
+
+      - 戦闘集団：敵兵／レベル3／人数3名
+
+      - 高脅威目標：重火器班／レベル4／生命点2／攻撃回数1／属性：人物
+
+      - 接触：【先制攻撃】／【反応を見る】
+
+      先制攻撃する場合は分隊先攻となり、両部隊とも【死ぬまで戦う】として扱います。反応を見る場合は、次の表を一回振り、検問部隊全体へ適用してください。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退：敵兵・重火器班ともに退去 |
+
+      | 2 | 物資要求：弾倉4個。受諾で両部隊が退去 |
+
+      | 3〜6 | 敵対的：敵先攻で戦闘開始 |
+
+      要求を拒否した場合や支払えない場合も、敵対的となります。敵対的で始まった戦闘では、敵兵は残り一名で撤退します。重火器班は、反応表で退去する場合を除き、自動では撤退しません。
+
+      両部隊が退去・撃破・捕虜化により戦闘対象から除外されたら、イベントは解決です。バリケードを動かして車列へ連絡し、後半の通常マップへ進んでください。
+
+      - 報酬：固定補給・弾倉2個（戦闘・非戦闘共通）
+
+      要求を受け入れる場合は、先に弾倉4個を支払い、その後に補給を得ます。戦利品表は振りません。分隊が退却した場合は作戦失敗です。'
+    success: 敵兵と重火器班の両部隊が除外。固定補給弾倉2個を取得し後半の通常マップへ。
+    failure: 分隊退却、分隊長戦死、任務放棄は作戦失敗。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level3
+      - road_heavy
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常3件を解決済みで、中間イベントは未解決。
+  repeat_policy: 該当する進行段階で一度。
+  situation: 道路の検問
+  checks: []
+  combat_ref: combat_midpoint
+  resource_changes: []
+  state_updates: []
+  transition:
+    destination: progression
+    counts_as_normal_event: false
+    alternatives:
+    - condition:
+        condition_id: midpoint_dispatch_retreat
+        statement: 分隊が退却した場合。
+      destination: scenario_end
+      counts_as_normal_event: false
+    - condition:
+        condition_id: midpoint_dispatch_failure
+        statement: 分隊長戦死または任務放棄。
+      destination: scenario_end
+      counts_as_normal_event: false
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: final_arrival
+  source_ref: main_route
+  event_role: final
+  category_id: null
+  title: 橋の守備隊
+  logic_authority: prose
+  text_anchor: final-arrival
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      橋の入口に土嚢が積まれ、小銃を持つ敵兵四人がその陰に分かれて陣地を守っていた。その後ろには有人装甲車両が一台停車し、車列が渡る道を塞いでいる。敵はこの歩兵集団と装甲車両の二単位で、追加の敵はいない。橋桁と路面は無事だが、敵のいるままトラックを進めることはできない。
+
+      運転手から、車列が待機地点に着いたと連絡が入った。分隊は橋の手前に展開する。歩兵だけを退かしても装甲車両が残る。両方を排除するか、部隊ごと橋を明け渡させなければならない。
+
+      - 戦闘集団：敵兵／レベル4／人数4名
+
+      - 高脅威目標：有人装甲車両／レベル5／生命点3／攻撃回数2／属性：車両・装甲
+
+      - 接触：【先制攻撃】／【反応を見る】
+
+      先制攻撃する場合は分隊先攻となり、両部隊とも【死ぬまで戦う】として扱います。反応を見る場合は、次の表を一回振り、守備隊全体へ適用してください。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退：敵兵・装甲車両ともに退去 |
+
+      | 2 | 物資要求：弾倉6個。受諾で両部隊が退去 |
+
+      | 3〜6 | 敵対的：敵先攻で戦闘開始 |
+
+      要求を拒否した場合や支払えない場合も、敵対的となります。敵対的で始まった戦闘では、敵兵は残り二名以下で撤退します。装甲車両は、反応表で退去する場合を除き、自動では撤退しません。装甲属性による独自のダメージ軽減はありません。
+
+      敵兵と装甲車両の両方が戦闘対象から除外されたら、橋の車道を空けて車列を呼んでください。車両を撃破した場合は残骸を路肩へ寄せ、鹵獲した場合は移動させます。鹵獲した車両は通行確保に使い、持ち帰りません。追加の判定はありません。
+
+      車列の救護所到着を確認したら、作戦成功です。分隊が退却した場合は作戦失敗となります。
+
+      - 報酬：標準戦利品表1回
+
+      戦闘、反応表による撤退、要求受諾のいずれで成功した場合も、戦利品表を一回振ってください。'
+    success: 敵兵と装甲車両を除外し車列の救護所到着を確認。標準戦利品表1回を取得。
+    failure: 分隊退却、分隊長戦死、任務放棄は作戦失敗。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level4
+      - bridge_vehicle
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 通常6件と中間イベントを解決済み。
+  repeat_policy: 該当する進行段階で一度。
+  situation: 橋の守備隊
+  checks: []
+  combat_ref: combat_final_arrival
+  resource_changes: []
+  state_updates: []
+  transition:
+    destination: scenario_end
+    counts_as_normal_event: false
+    alternatives:
+    - condition:
+        condition_id: final_arrival_retreat
+        statement: 分隊が退却した場合。
+      destination: scenario_end
+      counts_as_normal_event: false
+    - condition:
+        condition_id: final_arrival_failure
+        statement: 分隊長戦死または任務放棄。
+      destination: scenario_end
+      counts_as_normal_event: false
+  read_aloud: null
+  map_attribute: outdoor
+- event_id: epilogue
+  source_ref: main_route
+  event_role: epilogue
+  category_id: null
+  title: エピローグ
+  logic_authority: prose
+  text_anchor: epilogue
+  logic_summary:
+    summary: '運転手は分隊の合図を受け、最初のトラックを橋へ進めた。重いタイヤが継ぎ目を越えるたび、荷台の幌が揺れる。一台が渡り終えると、次の一台が続いた。分隊長は最後尾の車両が橋を離れるまで、その背中を見送っていた。
+
+      しばらくして、救護所から無線が入った。車列は無事に到着したという。受信機の向こうでは、エンジンの音に混じって人を呼ぶ声がしている。運び込まれた箱は入口に積まれる間もなく開けられ、薬と包帯が処置室へ運ばれていった。
+
+      「受領を確認した。助かった」
+
+      短い報告が終わると、無線は途切れた。分隊長は受信機を下ろし、来た道を振り返る。建物の陰を選び、補給を確かめ、ここまで通ってきた道路だ。今はその道を、空になったトラックが戻ってくる。橋の手前で止まる必要はもうなかった。
+
+      分隊長は車列の通過を報告し、帰還の準備に取りかかった。街の戦闘はまだ終わっていない。それでも、待っていた物資は届いた。救護所の入口では、次の担架を迎えるために扉が開け放たれていた。'
+    success: 成功のエピローグを読み、作戦終了後の処理へ進む。
+    failure: 失敗時の物語エピローグは設けず、Coreの終了・再編を行う。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies: []
+      npcs: []
+      locations:
+      - distribution_district
+  prerequisites:
+  - 作戦成功。
+  repeat_policy: 該当する進行段階で一度。
+  situation: エピローグ
+  checks: []
+  combat_ref: null
+  resource_changes: []
+  state_updates: []
+  transition:
+    destination: scenario_end
+    counts_as_normal_event: false
+  read_aloud: null
+combats:
+- combat_id: combat_event_13
+  logic_authority: prose
+  threat_class: enemy_group
+  enemies:
+  - instance_id: combat_event_13_armed_level3
+    enemy_ref: armed_level3
+    count: 3
+  reaction:
+    mode: table
+    die_sides: 6
+    entries:
+    - min: 1
+      max: 1
+      result: withdraw
+    - min: 2
+      max: 3
+      result: extortion
+    - min: 4
+      max: 6
+      result: hostile
+  initiative:
+    mode: core
+  preemptive_attack: 先制攻撃は分隊先攻とし、両部隊または当該集団を【死ぬまで戦う】として扱う。
+  round_zero: Core v1.01どおり。
+  enemy_retreat:
+    default:
+      mode: core
+      condition: null
+    overrides: []
+  squad_retreat: 通常はCoreの退却手順後、当該マップを未解決とする。中間・最終からの分隊退却は作戦失敗。
+  negotiation: Coreの技能・対象・消費・捕虜化・鹵獲規定に従う。シナリオ独自の指揮点使用上限は加えない。
+  end_conditions:
+  - 対象の全単位が撃破・撤退・捕虜化・鹵獲により戦闘対象から除外
+  - 分隊退却
+  - 分隊長戦死または任務放棄
+  text_anchor: event-13
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      道路脇に補給トラックが一台止まっている。そばには小銃を持つ三人の民間人がいた。服装は不揃いで、所属を示す腕章も見当たらない。二人が荷台の弾薬箱を調べ、残る一人が道路を見張っている。
+
+      分隊は建物の陰から様子をうかがった。自警団なのか、武装勢力の一員なのかは分からない。足元には運搬中に落とされたらしい弾倉が一個ある。相手はまだ分隊に気づいていない。弾倉だけ拾って離れるか、三人へ接触するか。
+
+      - 戦闘集団：武装した民間人／レベル3／人数3名
+
+      - 接触：【回避】／【先制攻撃】／【反応を見る】
+
+      接触を避ける場合は、弾倉1個を回収して解決します。接触する場合は、先制攻撃するか反応を見るかを選んでください。戦闘になった場合は、Coreの敵戦闘集団として扱います。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退 |
+
+      | 2〜3 | 物資要求：弾倉2個。受諾時にフラッシュバン1個と交換 |
+
+      | 4〜6 | 敵対的 |
+
+      物資要求では、手持ちの弾倉2個を渡す代わりに、相手が持つフラッシュバン1個を受け取れます。要求を拒否した場合や支払えない場合は敵対的となります。先攻と撤退の扱いはCoreに従います。
+
+      | 解決方法 | 取得 |
+
+      |---|---|
+
+      | 回避、戦闘前の相手の撤退 | 弾倉1個 |
+
+      | 物資要求を受諾 | 弾倉2個を支払い、フラッシュバン1個を取得 |
+
+      | 戦闘で全員が全滅・撤退・捕虜化により除外 | 弾倉4個 |
+
+      | 分隊退却 | 獲得なし・未解決 |
+
+      獲得物は該当する行だけを適用します。フラッシュバンの使用条件と効果はCoreに従ってください。'
+    success: 選択した行動を終えたら通常1件として記録。
+    failure: 分隊長戦死・任務放棄は作戦失敗。分隊退却の場合は未解決。
+    progress_on_failure: true
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level3
+      npcs: []
+      locations:
+      - distribution_district
+- combat_id: combat_midpoint
+  logic_authority: prose
+  threat_class: mixed
+  enemies:
+  - instance_id: combat_midpoint_armed_level3
+    enemy_ref: armed_level3
+    count: 3
+  - instance_id: combat_midpoint_road_heavy
+    enemy_ref: road_heavy
+    count: 1
+  reaction:
+    mode: table
+    die_sides: 6
+    entries:
+    - min: 1
+      max: 1
+      result: withdraw
+    - min: 2
+      max: 2
+      result: extortion
+    - min: 3
+      max: 6
+      result: hostile
+  initiative:
+    mode: core
+  preemptive_attack: 先制攻撃は分隊先攻とし、両部隊または当該集団を【死ぬまで戦う】として扱う。
+  round_zero: Core v1.01どおり。
+  enemy_retreat:
+    default:
+      mode: core
+      condition: null
+    overrides: []
+  squad_retreat: 通常はCoreの退却手順後、当該マップを未解決とする。中間・最終からの分隊退却は作戦失敗。
+  negotiation: Coreの技能・対象・消費・捕虜化・鹵獲規定に従う。シナリオ独自の指揮点使用上限は加えない。
+  end_conditions:
+  - 対象の全単位が撃破・撤退・捕虜化・鹵獲により戦闘対象から除外
+  - 分隊退却
+  - 分隊長戦死または任務放棄
+  text_anchor: midpoint-dispatch
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      交差点の先で、バリケードが車道を塞いでいた。小銃を持つ敵兵三人が柵の手前で通行車を止め、その後ろには重火器班が一組、陣取っている。敵はこの歩兵集団と重火器班の二単位で、装甲車両はいない。車列がここへ進めば、逃げ場のない道路で射撃を受ける。
+
+      分隊は建物の陰で足を止めた。敵はまだ撃っていない。先に仕掛けるか、姿を見せて相手の出方を確かめるか。道路を通れる状態にして、待機中の車列へ連絡する必要がある。
+
+      - 戦闘集団：敵兵／レベル3／人数3名
+
+      - 高脅威目標：重火器班／レベル4／生命点2／攻撃回数1／属性：人物
+
+      - 接触：【先制攻撃】／【反応を見る】
+
+      先制攻撃する場合は分隊先攻となり、両部隊とも【死ぬまで戦う】として扱います。反応を見る場合は、次の表を一回振り、検問部隊全体へ適用してください。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退：敵兵・重火器班ともに退去 |
+
+      | 2 | 物資要求：弾倉4個。受諾で両部隊が退去 |
+
+      | 3〜6 | 敵対的：敵先攻で戦闘開始 |
+
+      要求を拒否した場合や支払えない場合も、敵対的となります。敵対的で始まった戦闘では、敵兵は残り一名で撤退します。重火器班は、反応表で退去する場合を除き、自動では撤退しません。
+
+      両部隊が退去・撃破・捕虜化により戦闘対象から除外されたら、イベントは解決です。バリケードを動かして車列へ連絡し、後半の通常マップへ進んでください。
+
+      - 報酬：固定補給・弾倉2個（戦闘・非戦闘共通）
+
+      要求を受け入れる場合は、先に弾倉4個を支払い、その後に補給を得ます。戦利品表は振りません。分隊が退却した場合は作戦失敗です。'
+    success: 敵兵と重火器班の両部隊が除外。固定補給弾倉2個を取得し後半の通常マップへ。
+    failure: 分隊退却、分隊長戦死、任務放棄は作戦失敗。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level3
+      - road_heavy
+      npcs: []
+      locations:
+      - distribution_district
+- combat_id: combat_final_arrival
+  logic_authority: prose
+  threat_class: mixed
+  enemies:
+  - instance_id: combat_final_arrival_armed_level4
+    enemy_ref: armed_level4
+    count: 4
+  - instance_id: combat_final_arrival_bridge_vehicle
+    enemy_ref: bridge_vehicle
+    count: 1
+  reaction:
+    mode: table
+    die_sides: 6
+    entries:
+    - min: 1
+      max: 1
+      result: withdraw
+    - min: 2
+      max: 2
+      result: extortion
+    - min: 3
+      max: 6
+      result: hostile
+  initiative:
+    mode: core
+  preemptive_attack: 先制攻撃は分隊先攻とし、両部隊または当該集団を【死ぬまで戦う】として扱う。
+  round_zero: Core v1.01どおり。
+  enemy_retreat:
+    default:
+      mode: core
+      condition: null
+    overrides: []
+  squad_retreat: 通常はCoreの退却手順後、当該マップを未解決とする。中間・最終からの分隊退却は作戦失敗。
+  negotiation: Coreの技能・対象・消費・捕虜化・鹵獲規定に従う。シナリオ独自の指揮点使用上限は加えない。
+  end_conditions:
+  - 対象の全単位が撃破・撤退・捕虜化・鹵獲により戦闘対象から除外
+  - 分隊退却
+  - 分隊長戦死または任務放棄
+  text_anchor: final-arrival
+  logic_summary:
+    summary: '**マップ属性：【屋外】**
+
+      橋の入口に土嚢が積まれ、小銃を持つ敵兵四人がその陰に分かれて陣地を守っていた。その後ろには有人装甲車両が一台停車し、車列が渡る道を塞いでいる。敵はこの歩兵集団と装甲車両の二単位で、追加の敵はいない。橋桁と路面は無事だが、敵のいるままトラックを進めることはできない。
+
+      運転手から、車列が待機地点に着いたと連絡が入った。分隊は橋の手前に展開する。歩兵だけを退かしても装甲車両が残る。両方を排除するか、部隊ごと橋を明け渡させなければならない。
+
+      - 戦闘集団：敵兵／レベル4／人数4名
+
+      - 高脅威目標：有人装甲車両／レベル5／生命点3／攻撃回数2／属性：車両・装甲
+
+      - 接触：【先制攻撃】／【反応を見る】
+
+      先制攻撃する場合は分隊先攻となり、両部隊とも【死ぬまで戦う】として扱います。反応を見る場合は、次の表を一回振り、守備隊全体へ適用してください。
+
+      | 出目 | 反応・結果 |
+
+      |---:|---|
+
+      | 1 | 撤退：敵兵・装甲車両ともに退去 |
+
+      | 2 | 物資要求：弾倉6個。受諾で両部隊が退去 |
+
+      | 3〜6 | 敵対的：敵先攻で戦闘開始 |
+
+      要求を拒否した場合や支払えない場合も、敵対的となります。敵対的で始まった戦闘では、敵兵は残り二名以下で撤退します。装甲車両は、反応表で退去する場合を除き、自動では撤退しません。装甲属性による独自のダメージ軽減はありません。
+
+      敵兵と装甲車両の両方が戦闘対象から除外されたら、橋の車道を空けて車列を呼んでください。車両を撃破した場合は残骸を路肩へ寄せ、鹵獲した場合は移動させます。鹵獲した車両は通行確保に使い、持ち帰りません。追加の判定はありません。
+
+      車列の救護所到着を確認したら、作戦成功です。分隊が退却した場合は作戦失敗となります。
+
+      - 報酬：標準戦利品表1回
+
+      戦闘、反応表による撤退、要求受諾のいずれで成功した場合も、戦利品表を一回振ってください。'
+    success: 敵兵と装甲車両を除外し車列の救護所到着を確認。標準戦利品表1回を取得。
+    failure: 分隊退却、分隊長戦死、任務放棄は作戦失敗。
+    progress_on_failure: false
+    entity_refs:
+      events: []
+      enemies:
+      - armed_level4
+      - bridge_vehicle
+      npcs: []
+      locations:
+      - distribution_district
+states:
+- state_id: resolved_events
+  owner_scope: operation
+  initial: []
+  updates:
+  - 通常マップ解決時に出目を記録。退却時は追加しない。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+- state_id: normal_count
+  owner_scope: operation
+  initial: 0
+  updates:
+  - 通常解決時に1加算。3件で中間、6件で最終。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+- state_id: last_retreat
+  owner_scope: operation
+  initial: null
+  updates:
+  - 通常退却時に当該マップを記録。次回のd33決定時だけ候補から除外。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+- state_id: midpoint_done
+  owner_scope: operation
+  initial: false
+  updates:
+  - 検問の両部隊を除外し中間イベントを解決したらtrue。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+- state_id: scout_guidance
+  owner_scope: operation
+  initial: null
+  updates:
+  - MAP33で案内を選択したら次の固定イベントを対象として記録。第1ラウンドに分隊長・同行戦闘員の防御＋1。対象イベント終了時に消去。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+- state_id: rear_members
+  owner_scope: operation
+  initial: []
+  updates:
+  - MAP23で派遣、MAP32で交代した隊員は後方へ。作戦終了後に合流。
+  starts_at: 作戦開始
+  ends_at: 作戦終了
+  carryover: 再挑戦・部隊再編はCoreに従い、部隊資産や再編段階を独自に初期化しない。
+  reset: 本文の解除条件で更新。新しい分隊や作戦の準備はCoreと本文に従う。
+  stacking: 同じ効果・履歴を重複取得しない。
+outcomes:
+  success_text: 車列の救護所到着で作戦成功。解決方法にかかわらず最終報酬として標準戦利品表を一回だけ振る。初成功時のみ各分隊長に経験点1。後方隊員は合流。精算と回復はCore。
+  failure_text: 失敗条件が成立したら終了。成功報酬・経験点は得ず、Coreの終了・回復・部隊再編に従う。失敗用の物語エピローグは設けない。
+  partial_success_text: null
+  ethical: null
+  public_account: null
+  next_scenario: null
+core_overrides:
+- override_id: tutorial_xp
+  core_reference: Core16章 作戦完了の経験点
+  inherited: Coreの経験点成長と経験レベル。
+  overridden: 本作の初成功時に各分隊長へ経験点1を一度のみ。失敗・同じ分隊長の再成功で追加経験点なし。
+  reason: 2026-10-01 P2推奨承認。永久無償チュートリアルの反復経験点取得を抑える。
+  scope: 本作の作戦終了処理。
+  starts_at: 本作の初挑戦
+  ends_at: 以後の本作挑戦でも初成功記録を保持
+extensions: {}

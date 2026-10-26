@@ -18,3 +18,8 @@
 - エピローグ:約600
 合計
 約12,000文字前後
+
+## 公開チュートリアル
+
+- [OPEN THE WAY — 開通 v1.0.0](tutorial/part2/ua_tutorial_part2_clear_passage.md) — URBAN ASSAULT チュートリアル Part2。1人基本・2人対応、d33。
+

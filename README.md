@@ -52,3 +52,8 @@ URBAN ASSAULT の本文・シナリオ・データは、独自文章・独自デ
 ## 作者表記
 
 URBAN ASSAULTの作者名は **ぜっとん** です。今後の本文・付録・配布物も同じ表記を使用します。詳細は [作者表記方針](docs/AUTHOR_CREDIT_POLICY.md) を参照してください。
+
+## 無償チュートリアル
+
+- [OPEN THE WAY — 開通（Part2／v1.0.0）](scenarios/tutorial/part2/ua_tutorial_part2_clear_passage.md)：物資を集め、道路と橋の通行を確保するd33シナリオです。
+
